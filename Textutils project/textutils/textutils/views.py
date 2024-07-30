@@ -9,12 +9,31 @@ def index(request):
 def analyze(request):
     djtext = request.GET.get('text', 'default')
     removepunc = request.GET.get('removepunc','off')
-    print(removepunc)
-    print(djtext)
-    analyzed = djtext
-    params = {'purpose':'Removed Punctuation' , 'analyze_text':analyzed}
-    return render(request, 'analyze.html', params)
-
+    fullcaps = request.GET.get('fullcaps','off')
+    newlineremover =request.GET.get('newlineremover','off')
+    if removepunc == 'on':
+        punctuations = '''!()-[]{;:}'"\,<>./?@#$%^&*_~'''
+        analyzed=""
+        for char in djtext:
+            if char not in punctuations:
+                analyzed = analyzed + char
+        params = {'purpose':'Removed Punctuation' , 'analyzed_text':analyzed}
+        return render(request, 'analyze.html', params)
+    elif(fullcaps == 'on'):
+        analyzed=""
+        for char in djtext:
+            analyzed = analyzed + char.upper()
+        params = {'purpose':'Changed to Uppercase' , 'analyzed_text':analyzed}
+        return render(request, 'analyze.html', params)
+    elif(newlineremover == 'on'):
+        analyzed=""
+        for char in djtext:
+            if char != "\n":
+                analyzed = analyzed + char
+        params = {'purpose':'New Line Removed' , 'analyzed_text':analyzed}
+        return render(request, 'analyze.html', params)
+    else:
+        return HttpResponse("Error")
 # def capfirst(request):
 #     return HttpResponse("CapItalize First")
 
